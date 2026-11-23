@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
-import { getHold, releaseHold } from "./holds";
+import { getHold, holdIsIntact, releaseHold } from "./holds";
 
 export type CheckoutErrorCode = "HOLD_EXPIRED" | "SEAT_NOT_FOUND" | "SEAT_SOLD";
 
@@ -22,7 +22,7 @@ export function ticketCode(): string {
  */
 export async function checkout(holdToken: string, email: string) {
   const hold = await getHold(holdToken);
-  if (!hold) throw new CheckoutError("HOLD_EXPIRED");
+  if (!hold || !(await holdIsIntact(hold))) throw new CheckoutError("HOLD_EXPIRED");
 
   const seats = await prisma.seat.findMany({
     where: { id: { in: hold.seatIds }, eventId: hold.eventId },
