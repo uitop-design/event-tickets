@@ -20,6 +20,9 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
 
   useEffect(() => {
     load();
+    // keep other buyers' holds and sales visible without a reload
+    const t = setInterval(load, 15_000);
+    return () => clearInterval(t);
   }, [load]);
 
   const total = useMemo(
@@ -64,6 +67,11 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
 
   return (
     <section>
+      <div className="legend">
+        <span><i className="seat" /> free</span>
+        <span><i className="seat held" /> reserved</span>
+        <span><i className="seat sold" /> sold</span>
+      </div>
       {[...groupSeats(seats)].map(([section, rows]) => (
         <div key={section} className="section">
           <h3>{section}</h3>

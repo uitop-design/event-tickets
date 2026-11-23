@@ -27,3 +27,5 @@ button.primary:disabled { opacity: 0.5; cursor: default; }
 .checkout input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
 .tickets { border-collapse: collapse; width: 100%; background: #fff; }
 .tickets th, .tickets td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+.legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+.legend .seat { width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px; cursor: default; }
