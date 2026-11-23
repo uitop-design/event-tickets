@@ -1,4 +1,8 @@
 import { prisma } from "./prisma";
+import { cached } from "./cache";
+
+export const EVENTS_CACHE_KEY = "events:upcoming";
+const EVENTS_TTL = Number(process.env.EVENTS_CACHE_TTL ?? 300);
 
 export type EventSummary = {
   id: string;
@@ -10,7 +14,11 @@ export type EventSummary = {
   fromPriceCents: number | null;
 };
 
-export async function listUpcomingEvents(): Promise<EventSummary[]> {
+export function listUpcomingEvents(): Promise<EventSummary[]> {
+  return cached(EVENTS_CACHE_KEY, EVENTS_TTL, loadUpcomingEvents);
+}
+
+async function loadUpcomingEvents(): Promise<EventSummary[]> {
   const events = await prisma.event.findMany({
     where: { startsAt: { gte: new Date() } },
     orderBy: { startsAt: "asc" },
