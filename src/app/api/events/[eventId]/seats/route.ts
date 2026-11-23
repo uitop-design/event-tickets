@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { heldSeatIds } from "@/lib/holds";
 
 type Ctx = { params: Promise<{ eventId: string }> };
 
@@ -12,6 +13,8 @@ export async function GET(_req: Request, { params }: Ctx) {
   });
   if (seats.length === 0) return NextResponse.json({ error: "Event not found" }, { status: 404 });
 
+  const held = await heldSeatIds(eventId, seats.map((s) => s.id));
+
   return NextResponse.json(
     seats.map((s) => ({
       id: s.id,
@@ -19,7 +22,7 @@ export async function GET(_req: Request, { params }: Ctx) {
       row: s.row,
       number: s.number,
       priceCents: s.priceCents,
-      status: s.ticket ? "sold" : "available",
+      status: s.ticket ? "sold" : held.has(s.id) ? "held" : "available",
     })),
   );
 }
