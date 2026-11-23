@@ -1,0 +1,7 @@
+:root { --accent: #0f766e; --border: #e2e8f0; --muted: #64748b; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+a { color: inherit; }
+.topbar { padding: 14px 24px; background: #0f172a; color: #fff; }
+.brand { font-weight: 700; text-decoration: none; }
+.page { max-width: 1040px; margin: 0 auto; padding: 24px; }
