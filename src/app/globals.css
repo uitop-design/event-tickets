@@ -5,3 +5,8 @@ a { color: inherit; }
 .topbar { padding: 14px 24px; background: #0f172a; color: #fff; }
 .brand { font-weight: 700; text-decoration: none; }
 .page { max-width: 1040px; margin: 0 auto; padding: 24px; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.event-list { list-style: none; padding: 0; display: grid; gap: 12px; }
+.event-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+.event-title { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
+.price { font-weight: 600; color: var(--accent); white-space: nowrap; }
