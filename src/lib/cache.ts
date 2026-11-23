@@ -1,5 +1,6 @@
 import { redis } from "./redis";
 
+/** Read-through cache; if Redis is unreachable the loader result is returned directly. */
 export async function cached<T>(key: string, ttlSeconds: number, load: () => Promise<T>): Promise<T> {
   try {
     const hit = await redis.get(key);
@@ -10,8 +11,4 @@ export async function cached<T>(key: string, ttlSeconds: number, load: () => Pro
   const value = await load();
   await redis.set(key, JSON.stringify(value), "EX", ttlSeconds).catch(() => undefined);
   return value;
-}
-
-export async function invalidate(...keys: string[]): Promise<void> {
-  if (keys.length) await redis.del(...keys).catch(() => undefined);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listUpcomingEvents } from "@/lib/events";
+import { formatMoney } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export default async function Home() {
               <div className="muted">{e.venue} · {dateFmt.format(new Date(e.startsAt))}</div>
             </div>
             {e.fromPriceCents != null && (
-              <span className="price">from {(e.fromPriceCents / 100).toFixed(2)} {e.currency}</span>
+              <span className="price">from {formatMoney(e.fromPriceCents, e.currency)}</span>
             )}
           </li>
         ))}

@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { formatMoney } from "@/lib/money";
+import { seatLabel } from "@/lib/seat-layout";
 
 export const dynamic = "force-dynamic";
 
@@ -23,14 +25,14 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         <tbody>
           {order.tickets.map((t) => (
             <tr key={t.id}>
-              <td>{t.seat.section} {t.seat.row}{t.seat.number}</td>
+              <td>{seatLabel(t.seat)}</td>
               <td><code>{t.code}</code></td>
-              <td>{(t.seat.priceCents / 100).toFixed(2)} {order.event.currency}</td>
+              <td>{formatMoney(t.seat.priceCents, order.event.currency)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p><strong>Total: {(order.totalCents / 100).toFixed(2)} {order.event.currency}</strong></p>
+      <p><strong>Total: {formatMoney(order.totalCents, order.event.currency)}</strong></p>
     </>
   );
 }

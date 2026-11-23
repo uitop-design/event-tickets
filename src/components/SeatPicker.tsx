@@ -2,25 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CheckoutForm } from "./CheckoutForm";
+import { formatMoney } from "@/lib/money";
+import { groupSeats, seatLabel, type SeatView } from "@/lib/seat-layout";
 
-type SeatStatus = "available" | "held" | "sold";
-type Seat = { id: string; section: string; row: string; number: number; priceCents: number; status: SeatStatus };
 type Hold = { token: string; seatIds: string[]; expiresAt: string };
 
-function group(seats: Seat[]) {
-  const sections = new Map<string, Map<string, Seat[]>>();
-  for (const s of seats) {
-    const rows = sections.get(s.section) ?? new Map<string, Seat[]>();
-    rows.set(s.row, [...(rows.get(s.row) ?? []), s]);
-    sections.set(s.section, rows);
-  }
-  return sections;
-}
-
-const price = (cents: number, currency: string) => `${(cents / 100).toFixed(2)} ${currency}`;
-
 export function SeatPicker({ eventId, currency }: { eventId: string; currency: string }) {
-  const [seats, setSeats] = useState<Seat[]>([]);
+  const [seats, setSeats] = useState<SeatView[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [hold, setHold] = useState<Hold | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +27,7 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
     [seats, selected],
   );
 
-  function toggle(seat: Seat) {
+  function toggle(seat: SeatView) {
     if (hold || seat.status !== "available") return;
     setSelected((prev) => {
       const next = new Set(prev);
@@ -76,7 +64,7 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
 
   return (
     <section>
-      {[...group(seats)].map(([section, rows]) => (
+      {[...groupSeats(seats)].map(([section, rows]) => (
         <div key={section} className="section">
           <h3>{section}</h3>
           {[...rows].map(([row, rowSeats]) => (
@@ -88,7 +76,7 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
                   type="button"
                   className={`seat ${s.status} ${selected.has(s.id) ? "selected" : ""}`}
                   disabled={s.status !== "available"}
-                  title={`${section} ${row}${s.number} · ${price(s.priceCents, currency)}`}
+                  title={`${seatLabel(s)} · ${formatMoney(s.priceCents, currency)}`}
                   onClick={() => toggle(s)}
                 >
                   {s.number}
@@ -102,7 +90,7 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
       {error && <p className="error">{error}</p>}
 
       <div className="summary">
-        <span>{selected.size} seat(s) · {price(total, currency)}</span>
+        <span>{selected.size} seat(s) · {formatMoney(total, currency)}</span>
         {!hold && (
           <button type="button" className="primary" disabled={selected.size === 0} onClick={holdSelected}>
             Reserve seats
