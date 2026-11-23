@@ -22,3 +22,8 @@ a { color: inherit; }
 button.primary { background: var(--accent); color: #fff; border: 0; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 button.primary:disabled { opacity: 0.5; cursor: default; }
 .error { color: #b91c1c; }
+.checkout { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid var(--border); border-radius: 10px; display: grid; gap: 10px; max-width: 420px; }
+.checkout label { display: grid; gap: 4px; font-size: 0.9rem; }
+.checkout input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
+.tickets { border-collapse: collapse; width: 100%; background: #fff; }
+.tickets th, .tickets td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { CheckoutForm } from "./CheckoutForm";
 
 type SeatStatus = "available" | "held" | "sold";
 type Seat = { id: string; section: string; row: string; number: number; priceCents: number; status: SeatStatus };
@@ -111,6 +112,8 @@ export function SeatPicker({ eventId, currency }: { eventId: string; currency: s
           <button type="button" onClick={cancelHold}>Cancel reservation</button>
         )}
       </div>
+
+      {hold && <CheckoutForm holdToken={hold.token} expiresAt={hold.expiresAt} onExpired={cancelHold} />}
     </section>
   );
 }
