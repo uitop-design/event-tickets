@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  venue       String
+  description String?
+  startsAt    DateTime
+  currency    String   @default("EUR")
+  seats       Seat[]
+  orders      Order[]
+  createdAt   DateTime @default(now())
+
+  @@index([startsAt])
+}
+
+model Seat {
+  id         String  @id @default(cuid())
+  eventId    String
+  section    String
+  row        String
+  number     Int
+  priceCents Int
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticket     Ticket?
+
+  @@unique([eventId, section, row, number])
+  @@index([eventId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  eventId    String
+  email      String
+  status     OrderStatus @default(PENDING)
+  totalCents Int
+  event      Event       @relation(fields: [eventId], references: [id])
+  tickets    Ticket[]
+  createdAt  DateTime    @default(now())
+
+  @@index([email])
+}
+
+model Ticket {
+  id      String @id @default(cuid())
+  code    String @unique
+  orderId String
+  seatId  String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seat    Seat   @relation(fields: [seatId], references: [id])
+}
